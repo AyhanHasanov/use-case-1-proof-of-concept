@@ -2,10 +2,9 @@
 #Task 2
 
 import os
-from urllib import request
-
 import snowflake.connector #USED TO ESTABLISH CONNECTION WITH SNOWFLAKE
 import utill
+from urllib import request
 from dotenv import load_dotenv
 from flask import Flask
 from flask import Response
@@ -24,21 +23,11 @@ conn = snowflake.connector.connect(
 
 curs = conn.cursor()
 app = Flask(__name__)
-
 #--__name__ -> contains current's file name
 # END POINT -> url address with a function attached to it
-
-@app.route('/hello')
 #localhost is the loopback ip of the machine -> 127.0.0.1:port
 #routes/endpoints; to access localhost:5000/nameoffunc ->
 # 127.0.0.1:5000/hello returns 'Hello, world'
-def hello():
-    #utill.execute_query("INSERT INTO job(name) VALUES ('Test');",curs,conn)
-    return 'Hello, World!'
-
-@app.route('/')
-def index():
-    return 'index page?'
 
 @app.route("/attractions", methods=["GET"])
 def get_all_attractions():
@@ -105,19 +94,23 @@ def get_ticket_by_id(id):
 
 @app.route("/tickets", methods=["POST"])
 def create_ticket():
-    request_data = request.json
-    price = request_data["PRICE"]
-    promotion_id = request_data["PROMOTION_ID"]
-    status = request_data["STATUS"]
-    type_ = request_data["TYPE"]
-    validity_end = request_data["VALIDITY_END"]
-    validity_start = request_data["VALIDITY_START"]
-    print(price, promotion_id, status, type_, validity_start, validity_end)
-    curs.execute(f"insert into tickets(price, promotion_id, status, type, validity_start, validity_end) "
-                 f"values ({price}, {promotion_id}, '{status}', '{type_}', '{validity_start}', '{validity_end}')")
-    conn.commit()
+    try:
+        request_data = request.json
+        price = request_data["PRICE"]
+        promotion_id = request_data["PROMOTION_ID"]
+        status = request_data["STATUS"]
+        type_ = request_data["TYPE"]
+        validity_end = request_data["VALIDITY_END"]
+        validity_start = request_data["VALIDITY_START"]
 
-    return '123'
+        curs.execute(f"insert into tickets(price, promotion_id, status, type, validity_start, validity_end) "
+                 f"values ({price}, {promotion_id}, '{status}', '{type_}', '{validity_start}', '{validity_end}')")
+        conn.commit()
+
+        return "Ticket successfully created and inserted in the database."
+    except:
+        print("An exception occurred when creating ticket")
+        return Response(status=500)
 
 @app.route("/events", methods=["GET"])
 def get_all_events():
@@ -151,15 +144,45 @@ def get_visitor_by_id(id):
     else:
         return result
 
+#not in the requirments
 @app.route("/visitors", methods=["POST"])
 def create_visitor():
-    request_data = request.json
-    name = request_data["NAME"]
-    email = request_data["EMAIL"]
-    phone = request_data["PHONE"]
-    curs.execute(f"insert into visitors(name, email, phone) values ('{name}', '{email}', '{phone}')")
-    conn.commit()
-    return "success"
+    try:
+        request_data = request.json
+        name = request_data["NAME"]
+        email = request_data["EMAIL"]
+        phone = request_data["PHONE"]
+        curs.execute(f"insert into visitors(name, email, phone) values ('{name}', '{email}', '{phone}')")
+        conn.commit()
+        return Response(status=201)
+    except:
+        print("An exception occurred when creating visitor")
+        return Response(status=500)
+
+@app.route("/visitors/<int:id>", methods=["PUT"])
+def update_visitor_by_id(id):
+    #find the entity first
+    result = utill.get_by_id_json("visitors",id, curs)
+    if not result:
+        return Response(status=404) #entity doesnt exist, cant be updated
+    else:
+        request_data = request.json
+        name = request_data["NAME"]
+        email = request_data["EMAIL"]
+        phone = request_data["PHONE"]
+        curs.execute(f"update visitors set name = '{name}', email = '{email}', phone = '{phone}' where id = {id}")
+        conn.commit()
+        return Response(status=200)
+
+@app.route("/visitors/<int:id>", methods=["DELETE"])
+def delete_visitor_by_id(id):
+    result = utill.get_by_id_json("visitors",id, curs)
+    if not result:
+        return Response(status=404)
+    else:
+        curs.execute(f"delete from visitors where id = {id}")
+        conn.commit()
+        return Response(status=200)
 
 @app.route("/transactions", methods=["GET"])
 def get_all_transactions():
