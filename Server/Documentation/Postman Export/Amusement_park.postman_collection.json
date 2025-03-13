@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "aa984383-e933-4e6a-82f1-bbb70bbb4e33",
+		"name": "Amusement_park",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25545026"
+	},
+	"item": [
+		{
+			"name": "GetAllAttractions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/attractions",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"attractions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAttraction5",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/attractions/5",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"attractions",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetVisitor102",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/visitors/102",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"visitors",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateTicket",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"PRICE\": 15.30,\r\n\"PROMOTION_ID\": 0,\r\n\"STATUS\": \"available\",\r\n\"TYPE\": \"FMI-PU students\",\r\n\"VALIDITY_START\": \"2025-03-12\",\r\n\"VALIDITY_END\":\"2026-03-12\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/tickets",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateVisitor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"NAME\": \"John Doe\",\r\n    \"EMAIL\": \"email@johndoe.com\",\r\n    \"PHONE\": \"111-222-333\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/visitors",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"visitors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser401",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/visitors/401",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"visitors",
+						"401"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateVisitor103",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"EMAIL\": \"amy@johndoe.com\",\r\n        \"NAME\": \"Amy Doe\",\r\n        \"PHONE\": \"121-232-313\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/visitors/103",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"visitors",
+						"103"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllTickets",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/tickets",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
