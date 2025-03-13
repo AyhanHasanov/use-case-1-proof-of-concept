@@ -1,12 +1,12 @@
-from app import app
 from flask import Response, Blueprint
-from Routes import connection
+import QueryBuilder
 
 sales_bp = Blueprint("sales", __name__)
+qb = QueryBuilder.QueryBuilder()
 
 @sales_bp.route("/sales", methods=["GET"])
 def get_all_sales():
-    result = connection.get_all_json("sales")
+    result = qb.select("sales").execute()
     if not result:
         return Response(status=404)
     else:
@@ -14,7 +14,7 @@ def get_all_sales():
 
 @sales_bp.route("/sales/<int:id>", methods=["GET"])
 def get_sales_by_id(id):
-    result = connection.get_by_id_json("sales", id)
+    result = qb.select("sales").where(f"id={id}").execute()
     if not result:
         return Response(status=404)
     else:
