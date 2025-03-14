@@ -1,4 +1,3 @@
-from Routes import connection
 from flask import Response, request, Blueprint
 import QueryBuilder
 
@@ -7,19 +6,38 @@ qb = QueryBuilder.QueryBuilder()
 
 @tickets_bp.route("/tickets", methods=["GET"])
 def get_tickets():
-    result = qb.select("tickets").execute()
-    if not result:
-        return Response(status=404)
-    else:
-        return result
+    try:
+        type_ = request.args.get("type")
+        status = request.args.get("status")
+        query = qb.select("tickets")
+
+        filters = []
+        if status:
+            filters.append(f"status = \'{status}\'")
+        if type_:
+            filters.append(f"type = \'{type_}\'")
+
+        if filters:
+            query = query.where(f" AND ".join(filters))
+
+        result = query.execute()
+        if not result:
+            return Response(status=404)
+        else:
+            return result
+    except:
+        return Response(status=400)
 
 @tickets_bp.route("/tickets/<int:id>", methods=["GET"])
 def get_ticket(id):
-    result = qb.select("tickets").where(f"id = {id}").execute()
-    if not result:
-        return Response(status=404)
-    else:
-        return result
+    try:
+        result = qb.select("tickets").where(f"id = {id}").execute()
+        if not result:
+            return Response(status=404)
+        else:
+            return result
+    except:
+        return Response(status=400)
 
 @tickets_bp.route("/tickets", methods=["POST"])
 def create_ticket():
