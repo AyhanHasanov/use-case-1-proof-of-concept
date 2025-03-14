@@ -7,19 +7,26 @@ visitors_bp = Blueprint('visitors', __name__)
 
 @visitors_bp.route("/visitors", methods=["GET"])
 def get_all_visitors():
-    result = qb.select("visitors").execute()
-    if not result:
-        return Response(status=404)
-    else:
-        return result
+    try:
+        # pointless to filter because all 3 attributes (name, email, phone) are expected to be unique for each visitor
+        result = qb.select("visitors").execute()
+        if not result:
+            return Response(status=404)
+        else:
+            return result
+    except:
+        return Response(status=400)
 
 @visitors_bp.route("/visitors/<int:id>", methods=["GET"])
 def get_visitor_by_id(id):
-    result = qb.select("visitors").where(f"id = {id}").execute()
-    if not result:
-        return Response(status=404)
-    else:
-        return result
+    try:
+        result = qb.select("visitors").where(f"id = {id}").execute()
+        if not result:
+            return Response(status=404)
+        else:
+            return result
+    except:
+        return Response(status=400)
 
 
 @visitors_bp.route("/visitors", methods=["POST"])
@@ -56,9 +63,12 @@ def update_visitor_by_id(id):
 
 @visitors_bp.route("/visitors/<int:id>", methods=["DELETE"])
 def delete_visitor_by_id(id):
-    result = qb.select("visitors").where(f"id = {id}").execute()
-    if not result:
-        return Response(status=404)
-    else:
-        qb.delete("visitors").where(f"id = {id}").execute()
-        return Response(status=200)
+    try:
+        result = qb.select("visitors").where(f"id = {id}").execute()
+        if not result:
+            return Response(status=404)
+        else:
+            qb.delete("visitors").where(f"id = {id}").execute()
+            return Response(status=200)
+    except:
+        return Response(status=400)
