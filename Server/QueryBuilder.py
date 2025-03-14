@@ -66,12 +66,11 @@ class QueryBuilder:
         print(self.query)
         res = connection.curs.execute(self.query)
         print("Executed")
-        if(self.is_select):
+        if self.is_select:
             column_names = [desc[0] for desc in connection.curs.description]
             results = connection.curs.fetchall()
             json_results = [dict(zip(column_names, row)) for row in results]
             return json_results
         else:
             return res
-
 
