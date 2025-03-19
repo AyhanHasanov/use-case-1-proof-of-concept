@@ -1,50 +1,40 @@
 from flask import Response, Blueprint
 from flask import request
-import QueryBuilder
+from QueryBuilder import QueryBuilder
 
 transactions_bp = Blueprint('transactions', __name__)
-qb = QueryBuilder.QueryBuilder()
+qb = QueryBuilder()
 
 @transactions_bp.route("/transactions", methods=["GET"])
 def get_all_transactions():
     try:
-        type_ = request.args.get("type")
+        transaction_type = request.args.get("type")
         sale_id = request.args.get("sale_id")
         ticket_id = request.args.get("ticket_id")
         payroll_id = request.args.get("payroll_id")
-        maintanence_id = request.args.get("maintanence_id")
+        maintenance_id = request.args.get("maintenance_id")
 
-        query = qb.select("transactions")
-        filters = []
-        if type_:
-            filters.append(f"type = '{type_}'")
-        if sale_id:
-            filters.append(f"sale_id = {sale_id}")
-        if ticket_id:
-            filters.append(f"ticket_id = {ticket_id}")
-        if payroll_id:
-            filters.append(f"payroll_id = {payroll_id}")
-        if maintanence_id:
-            filters.append(f"maintanence_id = {maintanence_id}")
-
-        if filters:
-            query = query.where(" AND ".join(filters))
-
-        result = query.execute()
+        result = (qb.select("transactions")
+                  .where("type =", transaction_type)
+                  .and_where("sale_id =", sale_id)
+                  .and_where("ticket_id =", ticket_id)
+                  .and_where("payroll_id =", payroll_id)
+                  .and_where("maintenance_id =", maintenance_id)
+                  .execute())
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
 
 @transactions_bp.route("/transactions/<int:id>", methods=["GET"])
 def get_transaction_by_id(id):
     try:
-        result = qb.select("transactions").where(f"id = {id}").execute()
+        result = qb.select("transactions").where("id =", id).execute()
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
