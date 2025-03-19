@@ -1,9 +1,9 @@
 from flask import Response, Blueprint
 from flask import request
-import QueryBuilder
+from QueryBuilder import QueryBuilder
 
 sales_bp = Blueprint("sales", __name__)
-qb = QueryBuilder.QueryBuilder()
+qb = QueryBuilder()
 
 @sales_bp.route("/sales", methods=["GET"])
 def get_all_sales():
@@ -12,35 +12,27 @@ def get_all_sales():
         employee_id = request.args.get("employee_id")
         visitor_id = request.args.get("visitor_id")
 
-        query = qb.select("sales")
+        result = (qb.select("sales")
+                  .where("product_id =", product_id)
+                  .and_where("employee_id =", employee_id)
+                  .and_where("visitor_id =", visitor_id)
+                  .execute())
 
-        filters = []
-        if product_id:
-            filters.append(f"product_id = {product_id}")
-        if employee_id:
-            filters.append(f"employee_id = {employee_id}")
-        if visitor_id:
-            filters.append(f"visitor_id = {visitor_id}")
-
-        if filters:
-            query = query.where(" AND ".join(filters))
-
-        result = query.execute()
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
 
 @sales_bp.route("/sales/<int:id>", methods=["GET"])
 def get_sales_by_id(id):
     try:
-        result = qb.select("sales").where(f"id={id}").execute()
+        result = qb.select("sales").where("id =", id).execute()
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
 
