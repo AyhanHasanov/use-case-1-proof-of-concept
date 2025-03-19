@@ -1,25 +1,19 @@
 from flask import Response, Blueprint
 from flask import request
-import QueryBuilder
+from QueryBuilder import QueryBuilder
 
-qb = QueryBuilder.QueryBuilder()
+qb = QueryBuilder()
 products_bp = Blueprint('products', __name__)
-
 
 @products_bp.route("/products", methods=["GET"])
 def get_all_products():
     try:
         category = request.args.get('category')
-        query = qb.select("products")
-
-        if category:
-            query = query.where(f"category = \'{category}\'").execute()
-
-        result = query.execute()
+        result = qb.select("products").where(f"category =", category).execute()
 
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
