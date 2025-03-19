@@ -1,8 +1,8 @@
 from flask import Response, Blueprint
 from flask import request
-import QueryBuilder
+from QueryBuilder import QueryBuilder
 
-qb = QueryBuilder.QueryBuilder()
+qb = QueryBuilder()
 visitors_bp = Blueprint('visitors', __name__)
 
 @visitors_bp.route("/visitors", methods=["GET"])
@@ -12,19 +12,19 @@ def get_all_visitors():
         result = qb.select("visitors").execute()
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
 
 @visitors_bp.route("/visitors/<int:id>", methods=["GET"])
 def get_visitor_by_id(id):
     try:
-        result = qb.select("visitors").where(f"id = {id}").execute()
+        result = qb.select("visitors").where("id =", id).execute()
         if not result:
             return Response(status=404)
-        else:
-            return result
+
+        return result
     except:
         return Response(status=400)
 
@@ -45,30 +45,29 @@ def create_visitor():
 @visitors_bp.route("/visitors/<int:id>", methods=["PUT"])
 def update_visitor_by_id(id):
     try:
-        #find the entity first
-        result = qb.select("visitors").where(f"id = {id}").execute()
+        result = qb.select("visitors").where(f"id =", id).execute()
         if not result:
-            return Response(status=404) #entity doesnt exist, cant be updated
-        else:
-            request_data = request.json
-            name = request_data["NAME"]
-            email = request_data["EMAIL"]
-            phone = request_data["PHONE"]
-            (qb.update("visitors", ['NAME', 'EMAIL', 'PHONE'], [f"\'{name}\'", f"\'{email}\'", f"\'{phone}\'"])
-             .where(f"id = {id}").print_query()
-             .execute())
-            return Response(status=200)
+            return Response(status=404)
+
+        request_data = request.json
+        name = request_data["NAME"]
+        email = request_data["EMAIL"]
+        phone = request_data["PHONE"]
+        (qb.update("visitors", ['NAME', 'EMAIL', 'PHONE'], [f"\'{name}\'", f"\'{email}\'", f"\'{phone}\'"])
+        .where("id =", id).print_query()
+        .execute())
+        return Response(status=200)
     except:
         return Response(status=500)
 
 @visitors_bp.route("/visitors/<int:id>", methods=["DELETE"])
 def delete_visitor_by_id(id):
     try:
-        result = qb.select("visitors").where(f"id = {id}").execute()
+        result = qb.select("visitors").where("id =", id).execute()
         if not result:
             return Response(status=404)
-        else:
-            qb.delete("visitors").where(f"id = {id}").execute()
-            return Response(status=200)
+
+        qb.delete("visitors").where("id =", id).execute()
+        return Response(status=200)
     except:
         return Response(status=400)
